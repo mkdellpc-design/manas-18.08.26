@@ -3,4 +3,8 @@ rgs={
         name="mk"
         location="eastus"
     }
+    rg2={
+        name="mk2"
+        location="eastus"
+    }
 }
