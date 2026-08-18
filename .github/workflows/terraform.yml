@@ -1,0 +1,50 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format
+        run: terraform fmt -check
+        working-directory: ./parent_module
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./parent_module
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./parent_module
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./parent_module
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./parent_module
